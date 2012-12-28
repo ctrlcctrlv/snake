@@ -83,11 +83,11 @@ curses.curs_set(0)
 win.border(0)
 win.nodelay(1)
 #Put title in the top center
-win.addstr(0, (length/2)-(len(title)/2), title) 
+win.addstr(0, int((length/2)-(len(title)/2)), title) 
 
 def pfood(number_of_food):
     global food
-    for x in xrange(0,number_of_food):
+    for x in range(0,number_of_food):
         success = False
         while not success:
             food.append([randint(1, height-2), randint(1, length-2)])
@@ -197,6 +197,6 @@ x = 0
 for score in scores[crc]:
     x += 1
     try:
-        print "{}. {}".format(x,score)
+        print("{}. {}".format(x,score))
     except IndexError: 
         break
