@@ -10,6 +10,7 @@ from random import randint
 
 parser = argparse.ArgumentParser(description="Snake game that can be used with maps. Written using Python and ncurses.\n\nControl your snake with the arrow keys. Press 'q' to quit. Press space to pause.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-b", "--boundaries", help="Whether or not your game will end if you run into the borders.", default=False, action="store_true")
+parser.add_argument("-c", "--cross", help="Allows the game to end if your snake turns directly behind itself.", default=False, action="store_true")
 parser.add_argument("-d", "--dimensions", help="Dimensions in the format HEIGHTxLENGTH. If you are using a map, this value is ignored.", metavar="20x25", type=str)
 parser.add_argument("-l", "--layout", help="Instead of using the arrow keys, use the layout defined in layout. Accepted layouts are wasd and vim (hjkl).", type=str, choices=['wasd','vim'])
 parser.add_argument("map", help="Map file generated with rendermap.py.", nargs="?")
@@ -125,6 +126,12 @@ while True:
 
     if key not in [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN]:     # If an invalid key is pressed
         key = prevKey
+    
+    if not args.cross:
+        if key == KEY_DOWN and prevKey == KEY_UP \
+        or key == KEY_UP and prevKey == KEY_DOWN \
+        or key == KEY_LEFT and prevKey == KEY_RIGHT \
+        or key == KEY_RIGHT and prevKey == KEY_LEFT: key = prevKey
 
     # Calculates the new coordinates of the head of the snake. NOTE: len(snake) increases.
     # This is taken care of later at [1].
