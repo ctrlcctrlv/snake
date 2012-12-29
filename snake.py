@@ -198,6 +198,8 @@ if key == KEY_RESIZE: print("Window may not be resized during gameplay. This is 
 print("Score - {}{}{}".format('\033[92m' if score > 10 else '\033[91m', score, '\033[0m'))
 if score == max(scores[crc]): print("New high score!")
 
+if use_map:
+    print("Map file {} in use, CRC {}. Scores are attached to this map file and speed.".format(args.map, crc))
 print("High scores for games played with window dimensions of {}x{} and a speed of {} ({}):".format(height, length, args.speed, "Hard" if args.speed <= 75 else ("Normal" if args.speed <= 125 else "Easy")))
 
 x = 0
