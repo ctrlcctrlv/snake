@@ -40,10 +40,11 @@ try:
     with open(args.map) as f:
         map_ = f.read()
         mapdict = literal_eval(map_)
-        crc = binascii.crc32(map_+str(args.speed)) + 0xffffffff #CRC of high score file, used to make sure that maps match for high scores. I add the speed to the end of the file so that maps at different speeds are unique.
+        crc = binascii.crc32(map_.encode('ascii','ignore')+str(args.speed).encode('ascii','ignore')) + 0xffffffff #CRC of high score file, used to make sure that maps match for high scores. I add the speed to the end of the file so that maps at different speeds are unique.
     walls = mapdict['wall']
     use_map = True
 except (IOError,TypeError) as e: # TypeError, you say? It raises one of args.map is None.
+    raise
     walls = []
     use_map = False # No map found.
 
