@@ -44,7 +44,6 @@ try:
     walls = mapdict['wall']
     use_map = True
 except (IOError,TypeError) as e: # TypeError, you say? It raises one of args.map is None.
-    raise
     walls = []
     use_map = False # No map found.
 
