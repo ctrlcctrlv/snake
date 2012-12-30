@@ -178,7 +178,7 @@ scores = {}
 filename = ".snakescores"
 
 if not use_map:
-    crc = "N{}{}{}".format(height,length,args.speed) #Yes, I know, this isn't really a "CRC". Sue me.
+    crc = "N{0}{1}{2}".format(height,length,args.speed) #Yes, I know, this isn't really a "CRC". Sue me.
 
 if not os.path.exists(filename):
     with open(filename,"w") as f:
@@ -205,12 +205,12 @@ with open(filename,"r+") as f:
 
 if key == KEY_RESIZE: print("Window may not be resized during gameplay. This is a feature, not a bug.")
 high_score = max(scores[crc]) 
-print("Score - {}{}{}".format('\033[92m' if score >= high_score else '\033[91m', score, '\033[0m'))
+print("Score - {0}{1}{2}".format('\033[92m' if score >= high_score else '\033[91m', score, '\033[0m'))
 if score == high_score: print("New high score!")
 
 if use_map:
-    print("Map file {} in use, CRC {}. Scores are attached to this map file and speed.".format(args.map, crc))
-print("High scores for games played with window dimensions of {}x{} and a speed of {} ({}):".format(height, length, args.speed, "Hard" if args.speed <= 75 else ("Normal" if args.speed <= 125 else "Easy")))
+    print("Map file {0} in use, CRC {1}. Scores are attached to this map file and speed.".format(args.map, crc))
+print("High scores for games played with window dimensions of {0}x{1} and a speed of {2} ({3}):".format(height, length, args.speed, "Hard" if args.speed <= 75 else ("Normal" if args.speed <= 125 else "Easy")))
 
 for x in range(0,len(scores[crc])):
-    print("{}. {}".format(x+1,scores[crc][x]))
+    print("{0}. {1}".format(x+1,scores[crc][x]))
