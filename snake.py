@@ -96,7 +96,7 @@ def pfood(number_of_food):
         while not success:
             food.append([randint(1, height-2), randint(1, length-2)])
             #If the food is not in the snake, the walls, or in another food
-            if food[-1] in snake or food[-1] in walls or food.count(food[-1]) == 2:
+            if food[-1] in snake or food[-1] in walls or food[-1] in teleporters or food.count(food[-1]) == 2:
                 del food[-1]
             else:
                 success = True
