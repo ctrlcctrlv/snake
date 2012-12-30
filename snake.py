@@ -55,6 +55,7 @@ curses.start_color()
 curses.init_pair(1, curses.COLOR_RED, curses.COLOR_RED)
 curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_WHITE)
 curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK)
+curses.init_pair(4, curses.COLOR_CYAN, curses.COLOR_BLACK)
 
 maxyx = scr.getmaxyx()
 length = maxyx[1]
@@ -104,9 +105,11 @@ def pfood(number_of_food):
 
 pfood(args.number_of_food)
 
-if use_map or food.count(food[-1]) == 2:
+if use_map:
     for coords in walls:
         win.addch(coords[0], coords[1], ' ', curses.color_pair(2))
+    for coords in teleporters:
+        win.addch(coords[0], coords[1], '?', curses.color_pair(4))
 
 while True:
     win.addstr(height-1, 2, 'Score : {0}'.format(score))                # Printing 'Score'
@@ -153,6 +156,10 @@ while True:
     if snake[0] in snake[1:]: break
     # If snake runs into a wall ;_;
     if snake[0] in walls: break
+
+    if snake[0] in teleporters:
+        otherteleporters = [teleporter for teleporter in teleporters if teleporter != snake[0]]
+        snake[0] = [x+choice([-1,1]) for x in choice(otherteleporters)]
     
     if snake[0] in food:                                            # When snake eats the food
         score += 1
@@ -197,17 +204,13 @@ with open(filename,"r+") as f:
         f.write(str(scores))
 
 if key == KEY_RESIZE: print("Window may not be resized during gameplay. This is a feature, not a bug.")
-print("Score - {}{}{}".format('\033[92m' if score > 10 else '\033[91m', score, '\033[0m'))
-if score == max(scores[crc]): print("New high score!")
+high_score = max(scores[crc]) 
+print("Score - {}{}{}".format('\033[92m' if score >= high_score else '\033[91m', score, '\033[0m'))
+if score == high_score: print("New high score!")
 
 if use_map:
     print("Map file {} in use, CRC {}. Scores are attached to this map file and speed.".format(args.map, crc))
 print("High scores for games played with window dimensions of {}x{} and a speed of {} ({}):".format(height, length, args.speed, "Hard" if args.speed <= 75 else ("Normal" if args.speed <= 125 else "Easy")))
 
-x = 0
-for score in scores[crc]:
-    x += 1
-    try:
-        print("{}. {}".format(x,score))
-    except IndexError: 
-        break
+for x in range(0,len(scores[crc])):
+    print("{}. {}".format(x+1,scores[crc][x]))
