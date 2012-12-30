@@ -6,7 +6,7 @@ import argparse
 import curses
 from ast import literal_eval
 from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN, KEY_RESIZE
-from random import randint
+from random import randint, choice
 
 parser = argparse.ArgumentParser(description="Snake game that can be used with maps. Written using Python and ncurses.\n\nControl your snake with the arrow keys. Press 'q' to quit. Press space to pause.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument("-b", "--boundaries", help="Whether or not your game will end if you run into the borders.", default=False, action="store_true")
@@ -41,11 +41,13 @@ try:
         map_ = f.read()
         mapdict = literal_eval(map_)
         crc = binascii.crc32(map_.encode('ascii','ignore')+str(args.speed).encode('ascii','ignore')) & 0xffffffff #CRC of high score file, used to make sure that maps match for high scores. I add the speed to the end of the file so that maps at different speeds are unique.
-    walls = mapdict['wall']
     use_map = True
 except (IOError,TypeError) as e: # TypeError, you say? It raises one of args.map is None.
-    walls = []
+    mapdict = {}
     use_map = False # No map found.
+
+walls = mapdict.get('wall',[])
+teleporters = mapdict.get('teleporter',[])
 
 scr = curses.initscr()
 curses.start_color()
