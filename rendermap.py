@@ -6,6 +6,13 @@ CHARS = {"wall":"X", "empty":" ", "teleporter":"?"}
 #Open file
 snake_map = sys.stdin.read().splitlines()
 
+#Are we dealing with an XPM2? http://en.wikipedia.org/wiki/X_PixMap#XPM2
+if snake_map[0] == "! XPM2":
+    #Probably.
+    headerlength = int(snake_map[1].split()[2]) # ex 16 7 2 1, 2 colors so 2 lines
+    for x in range(0,headerlength+2):
+        snake_map.pop(0)
+
 #Validate file
 height = len(snake_map)
 length = len(snake_map[0])
