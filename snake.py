@@ -39,10 +39,10 @@ cherry = ice_cream = []
 
 # Open our map, if given
 try:
-    with open(args.map) as f:
+    with open(args.map,'rb') as f:
         map_ = f.read()
-        mapdict = literal_eval(map_)
-        crc = binascii.crc32(map_.encode('ascii','ignore')+str(args.speed).encode('ascii','ignore')) & 0xffffffff #CRC of high score file, used to make sure that maps match for high scores. I add the speed to the end of the file so that maps at different speeds are unique.
+        mapdict = literal_eval(map_.decode('utf-8'))
+        crc = binascii.crc32(map_+str(args.speed).encode('ascii') + (b'F' if args.more_food_types else b'')) & 0xffffffff #CRC of high score file, used to make sure that maps match for high scores. I add the speed to the end of the file so that maps at different speeds are unique.
     use_map = True
 except IOError:
     mapdict = {}
@@ -230,7 +230,7 @@ scores = {}
 filename = ".snakescores"
 
 if not use_map:
-    crc = "N{0}{1}{2}".format(height,length,args.speed) #Yes, I know, this isn't really a "CRC". Sue me.
+    crc = "N{0}{1}{2}{3}".format(height,length,args.speed,"" if not args.more_food_types else "F") #Yes, I know, this isn't really a "CRC". Sue me.
 
 if not os.path.exists(filename):
     with open(filename,"w") as f:
@@ -262,7 +262,7 @@ if score == high_score: print("New high score!")
 
 if use_map:
     print("Map file {0} in use, CRC {1}. Scores are attached to this map file and speed.".format(args.map, crc))
-print("High scores for games played with window dimensions of {0}x{1} and a speed of {2} ({3}):".format(height, length, args.speed, "Hard" if args.speed <= 75 else ("Normal" if args.speed <= 125 else "Easy")))
+print("High scores for games played with window dimensions of {0}x{1}, a speed of {2} ({3}) and {4} special food enabled:".format(height, length, args.speed, "Hard" if args.speed <= 75 else ("Normal" if args.speed <= 125 else "Easy"), "with" if args.more_food_types else "without"))
 
 for x, score in enumerate(scores[crc],1):
     print("{0}. {1}".format(x,score))
