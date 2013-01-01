@@ -6,6 +6,7 @@ import argparse
 import curses
 from ast import literal_eval
 from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN, KEY_RESIZE
+from itertools import chain
 from random import randint, choice
 
 parser = argparse.ArgumentParser(description="Snake game that can be used with maps. Written using Python and ncurses.\n\nControl your snake with the arrow keys. Press 'q' to quit. Press space to pause.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -13,7 +14,7 @@ parser.add_argument("-b", "--boundaries", help="Whether or not your game will en
 parser.add_argument("-c", "--cross", help="Allows the game to end if your snake turns directly behind itself.", default=False, action="store_true")
 parser.add_argument("-d", "--dimensions", help="Dimensions in the format HEIGHTxLENGTH. If you are using a map, this value is ignored.", metavar="20x25", type=str)
 parser.add_argument("-l", "--layout", help="Instead of using the arrow keys, use the layout defined in layout. Accepted layouts are wasd and vim (hjkl).", type=str, choices=['wasd','vim'])
-parser.add_argument("map", help="Map file generated with rendermap.py.", nargs="?")
+parser.add_argument("map", help="Map file generated with rendermap.py.", nargs="?", default="map")
 parser.add_argument("-n", "--number-of-food", help="How much food to put on the screen at a time.", default=1, metavar=1, type=int)
 parser.add_argument("-s", "--speed", help="How fast your snake goes. Lower numbers are faster. This number is in milliseconds. Use 50 for a challenge.", default=125, metavar=125, type=int)
 args = parser.parse_args()
@@ -35,14 +36,14 @@ title = "SNAKE"
 snake = [[4,10], [4,9], [4,8], [4,7]]
 food = []
 
-# Open our map, if guven
+# Open our map, if given
 try:
     with open(args.map) as f:
         map_ = f.read()
         mapdict = literal_eval(map_)
         crc = binascii.crc32(map_.encode('ascii','ignore')+str(args.speed).encode('ascii','ignore')) & 0xffffffff #CRC of high score file, used to make sure that maps match for high scores. I add the speed to the end of the file so that maps at different speeds are unique.
     use_map = True
-except (IOError,TypeError) as e: # TypeError, you say? It raises one of args.map is None.
+except IOError:
     mapdict = {}
     use_map = False # No map found.
 
@@ -89,21 +90,21 @@ win.nodelay(1)
 #Put title in the top center
 win.addstr(0, int((length/2)-(len(title)/2)), title) 
 
-def pfood(number_of_food):
+def pfood(number_of_food,not_empty_blocks):
     global food
     for x in range(0,number_of_food):
         success = False
         while not success:
             food.append([randint(1, height-2), randint(1, length-2)])
             #If the food is not in the snake, the walls, or in another food
-            if food[-1] in snake or food[-1] in walls or food[-1] in teleporters or food.count(food[-1]) == 2:
+            if food[-1] in not_empty_blocks or food.count(food[-1]) == 2:
                 del food[-1]
             else:
                 success = True
 
         win.addch(food[-1][0], food[-1][1], '@', curses.color_pair(3))       # Prints the food
 
-pfood(args.number_of_food)
+pfood(args.number_of_food,chain(snake,walls,teleporters))
 
 if use_map:
     for coords in walls:
@@ -164,7 +165,7 @@ while True:
     if snake[0] in food:                                            # When snake eats the food
         score += 1
         food.remove(snake[0])
-        pfood(1)
+        pfood(1,chain(snake,walls,teleporters))
     else:    
         last = snake.pop()                                          # [1] If it does not eat the food, length decreases
         win.addch(last[0], last[1], ' ')
