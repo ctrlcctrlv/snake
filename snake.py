@@ -180,9 +180,9 @@ while True:
     generator = chain(snake,walls,teleporters)
 
     if args.more_food_types:
+        die = randint(1,1000) # Like a six-sided die, silly. Except 100 sided.
+        foodcoords = [f[:2] for f in food]
         if frame > 500:        
-            die = randint(1,1000) # Like a six-sided die, silly. Except 100 sided.
-            foodcoords = [f[:2] for f in food]
             if die == 1 and cherry == []:
                 cherry = pfood(1,generator,[],type="cherry")
             elif cherry != []:
