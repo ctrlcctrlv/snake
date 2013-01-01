@@ -32,7 +32,7 @@ elif args.layout == "vim":
     KEY_DOWN = ord("j")
 
 key = KEY_RIGHT
-score = queue = 0
+score = queue = frame = 0
 title = "SNAKE"
 snake = [[4,10], [4,9], [4,8], [4,7]]
 cherry = ice_cream = []
@@ -127,6 +127,7 @@ if use_map:
         win.addch(coords[0], coords[1], '?', curses.color_pair(4))
 
 while True:
+    frame += 1
     win.addstr(height-1, 2, 'Score : {0}'.format(score)) # Printing 'Score'
     prevKey = key
     key = win.getch()
@@ -179,32 +180,33 @@ while True:
     generator = chain(snake,walls,teleporters)
 
     if args.more_food_types:
-        die = randint(1,1000) # Like a six-sided die, silly. Except 100 sided.
-        foodcoords = [f[:2] for f in food]
-        if die == 1 and cherry == []:
-            cherry = pfood(1,generator,[],type="cherry")
-        elif cherry != []:
-            cherry[0][2] -= 1
-            if cherry[0][2] == 0:
-                win.addch(cherry[0][0], cherry[0][1], ' ')
-                cherry = []
-            if len(cherry) > 0 and snake[0] == cherry[0][:2]:
-                score += 10
-                cherry = []
-                for x in range(0,int(len(snake)/2)):
-                    tail = snake.pop()
-                    win.addch(tail[0], tail[1], ' ')
-        if die <= 5 and ice_cream == []:
-            ice_cream = pfood(1,generator,[],type="ice_cream")
-        elif ice_cream != []:
-            ice_cream[0][2] -= 1
-            if ice_cream[0][2] == 0:
-                win.addch(ice_cream[0][0], ice_cream[0][1], ' ')
-                ice_cream = []
-            if len(ice_cream) > 0 and snake[0] == ice_cream[0][:2]:
-                score += 20
-                queue += 20
-                ice_cream = []
+        if frame > 500:        
+            die = randint(1,1000) # Like a six-sided die, silly. Except 100 sided.
+            foodcoords = [f[:2] for f in food]
+            if die == 1 and cherry == []:
+                cherry = pfood(1,generator,[],type="cherry")
+            elif cherry != []:
+                cherry[0][2] -= 1
+                if cherry[0][2] == 0:
+                    win.addch(cherry[0][0], cherry[0][1], ' ')
+                    cherry = []
+                if len(cherry) > 0 and snake[0] == cherry[0][:2]:
+                    score += 10
+                    cherry = []
+                    for x in range(0,int(len(snake)/2)):
+                        tail = snake.pop()
+                        win.addch(tail[0], tail[1], ' ')
+            if die <= 3 and ice_cream == []:
+                ice_cream = pfood(1,generator,[],type="ice_cream")
+            elif ice_cream != []:
+                ice_cream[0][2] -= 1
+                if ice_cream[0][2] == 0:
+                    win.addch(ice_cream[0][0], ice_cream[0][1], ' ')
+                    ice_cream = []
+                if len(ice_cream) > 0 and snake[0] == ice_cream[0][:2]:
+                    score += 20
+                    queue += 20
+                    ice_cream = []
 
     if snake[0] in (foodcoords if args.more_food_types else food):  # When snake eats the food
         score += 1
