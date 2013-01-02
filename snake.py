@@ -122,8 +122,9 @@ food = pfood(args.number_of_food,snake+walls+teleporters,[])
 if use_map:
     for coords in walls:
         win.addch(coords[0], coords[1], ' ', curses.color_pair(2))
-    for coords in teleporters:
-        win.addch(coords[0], coords[1], '?', curses.color_pair(4))
+    if len(teleporters) > 1: # Don't place any teleporters if there is only one teleporter
+        for coords in teleporters:
+            win.addch(coords[0], coords[1], '?', curses.color_pair(4))
 
 while True:
     frame += 1
