@@ -171,7 +171,7 @@ while True:
     # If snake runs into a wall ;_;
     if snake[0] in walls: break
 
-    if snake[0] in teleporters:
+    if snake[0] in teleporters and len(teleporters) > 1:
         otherteleporters = [teleporter for teleporter in teleporters if teleporter != snake[0]]
         snake[0] = [x+choice([-1,1]) for x in choice(otherteleporters)]
     
