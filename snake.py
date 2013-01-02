@@ -117,7 +117,7 @@ def pfood(number_of_food,not_empty_blocks,food,type="normal"):
         win.addch(food[-1][0], food[-1][1], char, curses.color_pair(color)) # Prints the food
     return food
 
-food = pfood(args.number_of_food,chain(snake,walls,teleporters),[])
+food = pfood(args.number_of_food,snake+walls+teleporters,[])
 
 if use_map:
     for coords in walls:
