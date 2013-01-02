@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import binascii # Used for high scores
+import datetime # Used for length of play
 import os # Used to verify if high score file exists
 import argparse # Used for command line argument interpretation
 import curses 
@@ -35,6 +36,7 @@ score = queue = frame = 0
 title = "SNAKE"
 snake = [[4,10], [4,9], [4,8], [4,7]]
 cherry = ice_cream = []
+start = datetime.datetime.now()
 
 # Open our map, if given
 try:
@@ -226,6 +228,8 @@ while True:
     win.addch(snake[0][0], snake[0][1], ' ', curses.color_pair(1))
 
 curses.endwin()
+end = datetime.datetime.now()
+delta = end - start
 
 #High scores
 scores = {}
@@ -238,16 +242,17 @@ if not os.path.exists(filename):
     with open(filename,"w") as f:
         pass
 
+def scores_():
+    try:
+        scores[crc].append(score)
+        scores[crc].sort()
+        scores[crc].reverse()
+        scores[crc] = scores[crc][:10] #Only save the highest ten scores.
+    except KeyError:
+        scores[crc] = [score]
+
 with open(filename,"r+") as f:
     try:
-        def scores_():
-            try:
-                scores[crc].append(score)
-                scores[crc].sort()
-                scores[crc].reverse()
-                scores[crc] = scores[crc][:10] #Only save the highest ten scores.
-            except KeyError:
-                scores[crc] = [score]
         scores = literal_eval(f.read())
         scores_()
     except Exception: #Something went wrong, the file may be corrupt or non-existent.
@@ -260,6 +265,7 @@ with open(filename,"r+") as f:
 if key == KEY_RESIZE: print("Window may not be resized during gameplay. This is a feature, not a bug.")
 high_score = max(scores[crc]) 
 print("Score - {0}{1}{2}".format('\033[92m' if score >= high_score else '\033[91m', score, '\033[0m'))
+print("You survived {0:d} seconds. ({1:02d}:{2:02d})".format(delta.seconds, int(delta.seconds/60), delta.seconds%60))
 if score == high_score: print("New high score!")
 
 if use_map:
