@@ -6,7 +6,6 @@ import argparse # Used for command line argument interpretation
 import curses 
 from ast import literal_eval # Used to read the files
 from curses import KEY_RIGHT, KEY_LEFT, KEY_UP, KEY_DOWN, KEY_RESIZE # Used for lazyness
-from itertools import chain # Used to chain lists together in a generator without having to make a new list each time
 from random import randint, choice # Used for making decisions about placing food
 
 parser = argparse.ArgumentParser(description="Snake game that can be used with maps. Written using Python and ncurses.\n\nControl your snake with the arrow keys. Press 'q' to quit. Press space to pause.", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -177,15 +176,14 @@ while True:
         otherteleporters = [teleporter for teleporter in teleporters if teleporter != snake[0]]
         snake[0] = [x+choice([-1,1]) for x in choice(otherteleporters)]
     
-    generator = chain(snake,walls,teleporters)
-    print(list(generator))
+    not_empty_blocks = snake+walls+teleporters
 
     if args.more_food_types:
         die = randint(1,1000) # Like a six-sided die, silly. Except 100 sided.
         foodcoords = [f[:2] for f in food]
         if frame > 500:        
             if die == 1 and cherry == []:
-                cherry = pfood(1,generator,[],type="cherry")
+                cherry = pfood(1,not_empty_blocks,[],type="cherry")
             elif cherry != []:
                 cherry[0][2] -= 1
                 if cherry[0][2] == 0:
@@ -198,7 +196,7 @@ while True:
                         tail = snake.pop()
                         win.addch(tail[0], tail[1], ' ')
             if die <= 3 and ice_cream == []:
-                ice_cream = pfood(1,generator,[],type="ice_cream")
+                ice_cream = pfood(1,not_empty_blocks,[],type="ice_cream")
             elif ice_cream != []:
                 ice_cream[0][2] -= 1
                 if ice_cream[0][2] == 0:
@@ -212,10 +210,12 @@ while True:
     if snake[0] in (foodcoords if args.more_food_types else food):  # When snake eats the food
         score += 1
         if args.more_food_types:
+            die = randint(1,1000) # Like a six-sided die, silly. Except 100 sided.
+            foodcoords = [f[:2] for f in food]
             food.pop(foodcoords.index(snake[0]))
         else:
             food.remove(snake[0]) 
-        food = pfood(1,generator,food)
+        food = pfood(1,not_empty_blocks,food)
     else:    
         if queue > 0: # Snake growth queue imposed by ice cream
             queue -= 1
