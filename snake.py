@@ -178,6 +178,7 @@ while True:
         snake[0] = [x+choice([-1,1]) for x in choice(otherteleporters)]
     
     generator = chain(snake,walls,teleporters)
+    print(list(generator))
 
     if args.more_food_types:
         die = randint(1,1000) # Like a six-sided die, silly. Except 100 sided.

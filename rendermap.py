@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys
 
-CHARS = {"wall":"X", "empty":" ", "teleporter":"?"}
+CHARS = {"wall":".", "empty":"#", "teleporter":"@"}
 
 #Open file
 snake_map = sys.stdin.read().splitlines()
