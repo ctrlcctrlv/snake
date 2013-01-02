@@ -131,18 +131,16 @@ while True:
     prevKey = key
     key = win.getch()
 
-    if key == KEY_RESIZE or key == ord('q'):
-        break
-
 #    win.timeout(150 - (len(snake)/5 + len(snake)/10)%120)          # Increases the speed of Snake as its length increases
     win.timeout(args.speed)
 
     if key == ord(' '): # If SPACE BAR is pressed, wait for another one (Pause/Resume)
         key = -1 # 
-        while key != ord(' '):
+        while key not in [ord(' '),ord('q')]: 
             key = win.getch()
-        key = prevKey
-        continue
+
+    if key == KEY_RESIZE or key == ord('q'):
+        break
 
     if key not in [KEY_LEFT, KEY_RIGHT, KEY_UP, KEY_DOWN]: # If an invalid key is pressed
         key = prevKey
@@ -176,7 +174,7 @@ while True:
         otherteleporters = [teleporter for teleporter in teleporters if teleporter != snake[0]]
         snake[0] = [x+choice([-1,1]) for x in choice(otherteleporters)]
     
-    not_empty_blocks = snake+walls+teleporters
+    not_empty_blocks = snake+walls+teleporters+food
 
     if args.more_food_types:
         die = randint(1,1000) # Like a six-sided die, silly. Except 100 sided.
