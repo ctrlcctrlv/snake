@@ -183,7 +183,7 @@ while True:
     if args.more_food_types:
         die = randint(1,1000) # Like a six-sided die, silly. Except 100 sided.
         foodcoords = [f[:2] for f in food]
-        if frame > 0: # Special food may not appear in the beginning
+        if frame > 500: # Special food may not appear in the beginning
             if die == 6 and cherry == []:
                 cherry = pfood(1,not_empty_blocks,[],type="cherry")
             elif cherry != []: # If there's a cherry on the screen
