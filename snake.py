@@ -32,13 +32,21 @@ elif args.layout == "vim":
     KEY_UP = ord("k")
     KEY_DOWN = ord("j")
 
+# The snake moves right to begin with
 key = KEY_RIGHT
+# The score, the snake's growth queue and the current iteration start at 0
 score = queue = frame = 0
 title = "SNAKE"
+# Snake's beginning co-ordinates (TODO: randomize)
 snake = [[4,10], [4,9], [4,8], [4,7]]
+# Character that represents the snake
 snakechar = " "
+# Special food items
 cherry = ice_cream = []
+# Game start time
 start = datetime.datetime.now()
+# List of pauses to be subtracted from the survival time
+pauses = []
 
 # Open our map, if given
 try:
@@ -140,8 +148,12 @@ while True:
 
     if key == ord(' '): # If SPACE BAR is pressed, wait for another one (Pause/Resume)
         key = -1 # 
+        # When you pause the game time should also pause
+        start_pause = datetime.datetime.now()
         while key not in [ord(' '),ord('q')]: 
             key = win.getch()
+        end_pause = datetime.datetime.now()
+        pauses.append(end_pause-start_pause)
 
     if key == KEY_RESIZE or key == ord('q'):
         break
@@ -181,6 +193,7 @@ while True:
     not_empty_blocks = snake+walls+teleporters+food
 
     if args.more_food_types:
+        not_empty_blocks += cherry+ice_cream
         die = randint(1,1000) # Like a six-sided die, silly. Except 100 sided.
         foodcoords = [f[:2] for f in food]
         if frame > 500: # Special food may not appear in the beginning
@@ -230,6 +243,7 @@ while True:
 curses.endwin()
 end = datetime.datetime.now()
 delta = end - start
+for pause in pauses: delta -= pause
 
 #High scores
 scores = {}
