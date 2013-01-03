@@ -182,18 +182,18 @@ while True:
     if args.more_food_types:
         die = randint(1,1000) # Like a six-sided die, silly. Except 100 sided.
         foodcoords = [f[:2] for f in food]
-        if frame > 500:        
-            if die == 1 and cherry == []:
+        if frame > 0: # Special food may not appear in the beginning
+            if die == 6 and cherry == []:
                 cherry = pfood(1,not_empty_blocks,[],type="cherry")
-            elif cherry != []:
-                cherry[0][2] -= 1
-                if cherry[0][2] == 0:
+            elif cherry != []: # If there's a cherry on the screen
+                cherry[0][2] -= 1 # Decrease the cherry's life
+                if cherry[0][2] == 0: # When the cherry dies
                     win.addch(cherry[0][0], cherry[0][1], ' ')
                     cherry = []
-                if len(cherry) > 0 and snake[0] == cherry[0][:2]:
+                if len(cherry) > 0 and snake[0] == cherry[0][:2]: # If there's a cherry and the snake eats it
                     score += 10
                     cherry = []
-                    for x in range(0,int(len(snake)/2)):
+                    for x in range(0,int(len(snake)/2)): # Cut the snake in half
                         tail = snake.pop()
                         win.addch(tail[0], tail[1], ' ')
             if die <= 3 and ice_cream == []:
@@ -211,8 +211,6 @@ while True:
     if snake[0] in (foodcoords if args.more_food_types else food):  # When snake eats the food
         score += 1
         if args.more_food_types:
-            die = randint(1,1000) # Like a six-sided die, silly. Except 100 sided.
-            foodcoords = [f[:2] for f in food]
             food.pop(foodcoords.index(snake[0]))
         else:
             food.remove(snake[0]) 
