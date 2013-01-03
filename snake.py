@@ -13,6 +13,7 @@ parser = argparse.ArgumentParser(description="Snake game that can be used with m
 parser.add_argument("-b", "--boundaries", help="Whether or not your game will end if you run into the borders.", default=False, action="store_true")
 parser.add_argument("-c", "--cross", help="Allows the game to end if your snake turns directly behind itself.", default=False, action="store_true")
 parser.add_argument("-d", "--dimensions", help="Dimensions in the format HEIGHTxLENGTH. If you are using a map, this value is ignored.", metavar="20x25", type=str)
+parser.add_argument("-e", "--no-direction", help="Don't show the direction that the snake is going in.", default=False, action="store_true")
 parser.add_argument("-l", "--layout", help="Instead of using the arrow keys, use the layout defined in layout. Accepted layouts are wasd and vim (hjkl).", type=str, choices=['wasd','vim'])
 parser.add_argument("-m", "--more-food-types", help="Place more types of food on the screen. This places ice cream, which gives you fifteen points and makes your snake grow by ten, and cherries, which are very rare and give you ten points and half the size of your snake.", default=False, action="store_true")
 parser.add_argument("map", help="Map file generated with rendermap.py.", nargs="?", default="map")
@@ -35,6 +36,7 @@ key = KEY_RIGHT
 score = queue = frame = 0
 title = "SNAKE"
 snake = [[4,10], [4,9], [4,8], [4,7]]
+snakechar = " "
 cherry = ice_cream = []
 start = datetime.datetime.now()
 
@@ -55,7 +57,7 @@ teleporters = mapdict.get('teleporter',[])
 scr = curses.initscr()
 curses.start_color()
 
-curses.init_pair(1, curses.COLOR_RED, curses.COLOR_RED) # snake
+curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_RED) # snake
 curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_WHITE) # walls
 curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLACK) # food
 curses.init_pair(4, curses.COLOR_CYAN, curses.COLOR_BLACK) # teleporters
@@ -134,7 +136,6 @@ while True:
     prevKey = key
     key = win.getch()
 
-#    win.timeout(150 - (len(snake)/5 + len(snake)/10)%120)          # Increases the speed of Snake as its length increases
     win.timeout(args.speed)
 
     if key == ord(' '): # If SPACE BAR is pressed, wait for another one (Pause/Resume)
@@ -222,8 +223,9 @@ while True:
             last = snake.pop() # [1] If it does not eat the food, length decreases
             win.addch(last[0], last[1], ' ')
 
+    if not args.no_direction: snakechar = "v" if key == KEY_DOWN else ("<" if key == KEY_LEFT else (">" if key == KEY_RIGHT else "^"))  
 
-    win.addch(snake[0][0], snake[0][1], ' ', curses.color_pair(1))
+    win.addch(snake[0][0], snake[0][1], snakechar, curses.color_pair(1))
 
 curses.endwin()
 end = datetime.datetime.now()
