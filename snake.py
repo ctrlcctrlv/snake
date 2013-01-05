@@ -95,6 +95,12 @@ if use_map or args.dimensions:
         length = l+2 #compensate for border
         height = h+2
 
+total_blocks = (length-2) * (height-2)
+
+if (total_blocks-len(snake)) <= args.number_of_food: 
+    curses.endwin()
+    raise ValueError("The game is unplayable with that many food!")
+
 win = curses.newwin(height, length, 0, 0)
 win.keypad(1)
 curses.noecho()
@@ -190,7 +196,10 @@ while True:
         otherteleporters = [teleporter for teleporter in teleporters if teleporter != snake[0]]
         snake[0] = [x+choice([-1,1]) for x in choice(otherteleporters)]
     
-    not_empty_blocks = snake+walls+teleporters+food
+    not_empty_blocks = snake+walls+teleporters+food+ice_cream+cherry
+
+    # Yes, this is possible. If there are no empty blocks, the game is over. You win!
+    if len(not_empty_blocks) > total_blocks: break
 
     if args.more_food_types:
         not_empty_blocks += cherry+ice_cream
