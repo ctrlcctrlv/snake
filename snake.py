@@ -110,6 +110,9 @@ win.nodelay(1)
 #Put title in the top center
 win.addstr(0, int((length/2)-(len(title)/2)), title) 
 
+def psnake(y, x, snakechar):
+    win.addch(y, x, snakechar, curses.color_pair(1))
+
 def pfood(number_of_food,not_empty_blocks,food,type="normal"):
     for x in range(0,number_of_food):
         success = False
@@ -146,6 +149,13 @@ if use_map:
 
 while True:
     frame += 1
+
+    if not args.no_direction: snakechar = "v" if key == KEY_DOWN else ("<" if key == KEY_LEFT else (">" if key == KEY_RIGHT else "^"))  
+
+    if frame == 1: #On the first frame
+        for x in range(0,len(snake)): 
+            psnake(snake[x][0], snake[x][1], snakechar) #Put the whole snake on the screen
+
     win.addstr(height-1, 2, 'Score : {0}'.format(score)) # Printing 'Score'
     prevKey = key
     key = win.getch()
@@ -245,9 +255,7 @@ while True:
             last = snake.pop() # [1] If it does not eat the food, length decreases
             win.addch(last[0], last[1], ' ')
 
-    if not args.no_direction: snakechar = "v" if key == KEY_DOWN else ("<" if key == KEY_LEFT else (">" if key == KEY_RIGHT else "^"))  
-
-    win.addch(snake[0][0], snake[0][1], snakechar, curses.color_pair(1))
+    psnake(snake[0][0], snake[0][1], snakechar)
 
 curses.endwin()
 end = datetime.datetime.now()
