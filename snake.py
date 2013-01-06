@@ -149,13 +149,6 @@ if use_map:
 
 while True:
     frame += 1
-
-    if not args.no_direction: snakechar = "v" if key == KEY_DOWN else ("<" if key == KEY_LEFT else (">" if key == KEY_RIGHT else "^"))  
-
-    if frame == 1: #On the first frame
-        for x in range(0,len(snake)): 
-            psnake(snake[x][0], snake[x][1], snakechar) #Put the whole snake on the screen
-
     win.addstr(height-1, 2, 'Score : {0}'.format(score)) # Printing 'Score'
     prevKey = key
     key = win.getch()
@@ -182,6 +175,12 @@ while True:
         or key == KEY_UP and prevKey == KEY_DOWN \
         or key == KEY_LEFT and prevKey == KEY_RIGHT \
         or key == KEY_RIGHT and prevKey == KEY_LEFT: key = prevKey
+
+    if not args.no_direction: snakechar = "v" if key == KEY_DOWN else ("<" if key == KEY_LEFT else (">" if key == KEY_RIGHT else "^"))  
+
+    if frame == 1: #On the first frame
+        for x in range(0,len(snake)): 
+            psnake(snake[x][0], snake[x][1], snakechar) #Put the whole snake on the screen
 
     # Calculates the new coordinates of the head of the snake. NOTE: len(snake) increases.
     # This is taken care of later at [1].
